@@ -5,12 +5,23 @@ export const HtmlEditor = ({ isOpen, onClose, isDarkMode }) => {
   const [htmlContent, setHtmlContent] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [previewKey, setPreviewKey] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       fetchHtmlContent();
     }
   }, [isOpen]);
+
+  const refreshPreview = () => {
+  setIsRefreshing(true);
+
+  setTimeout(() => {
+    setPreviewKey((k) => k + 1);
+    setIsRefreshing(false);
+  }, 180);
+};
 
   const fetchHtmlContent = async () => {
     try {
@@ -20,6 +31,7 @@ export const HtmlEditor = ({ isOpen, onClose, isDarkMode }) => {
       );
       if (!response.ok) throw new Error("Failed to fetch HTML content");
       const content = await response.text();
+
       const styledContent = `
         <style>
           ::-webkit-scrollbar {
@@ -39,11 +51,14 @@ export const HtmlEditor = ({ isOpen, onClose, isDarkMode }) => {
           body {
             margin: 0;
             padding: 16px;
+            font-family: system-ui;
           }
         </style>
         ${content}
       `;
+
       setHtmlContent(styledContent);
+      refreshPreview();
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -55,60 +70,106 @@ export const HtmlEditor = ({ isOpen, onClose, isDarkMode }) => {
   if (!isOpen) return null;
 
   return (
-    <div
-      className={`fixed inset-0 z-50 ${
-        isDarkMode ? "bg-[#1e1e1e]" : "bg-white"
-      }`}
-    >
-      {/* Header */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* 🔥 BACKDROP */}
       <div
-        className={`h-16 flex items-center justify-between px-4 border-b ${
-          isDarkMode ? "border-[#333333]" : "border-gray-200"
-        }`}
-      >
-        <h2
-          className={`text-lg font-semibold ${
-            isDarkMode ? "text-white" : "text-gray-800"
-          }`}
-        >
-          HTML Editor
-        </h2>
-        <button
-          onClick={onClose}
-          className={`p-2 rounded-md hover:bg-opacity-80 ${
-            isDarkMode ? "hover:bg-[#333333]" : "hover:bg-gray-100"
-          }`}
-        >
-          <X
-            className={`w-5 h-5 ${isDarkMode ? "text-white" : "text-gray-600"}`}
-          />
-        </button>
-      </div>
+        className="absolute inset-0 backdrop-blur-xl bg-black/60 animate-fadeIn"
+        onClick={onClose}
+      />
 
-      {/* Content */}
-      <div className="h-[calc(100%-4rem)] overflow-hidden">
-        {isLoading ? (
-          <div className="flex items-center justify-center h-full">
-            <div
-              className={`animate-spin rounded-full h-8 w-8 border-2 ${
-                isDarkMode
-                  ? "border-white border-t-transparent"
-                  : "border-gray-800 border-t-transparent"
-              }`}
-            />
-          </div>
-        ) : error ? (
-          <div className="text-red-500 text-center p-4">{error}</div>
-        ) : (
-          <div className="h-full">
-            <iframe
-              srcDoc={htmlContent}
-              className="w-full h-full border-none"
-              title="HTML Preview"
-              sandbox="allow-scripts allow-same-origin"
-            />
-          </div>
-        )}
+      {/* 🚀 FLOATING MODAL */}
+      <div
+        className={`relative w-[95vw] h-[92vh] rounded-2xl overflow-hidden border animate-scaleIn
+        ${
+          isDarkMode
+            ? "bg-[#0f172a]/90 border-white/10"
+            : "bg-white/90 border-gray-200"
+        }
+        backdrop-blur-2xl shadow-[0_40px_120px_rgba(0,0,0,0.7)]`}
+      >
+        {/* ===== HEADER ===== */}
+        <div
+          className={`h-14 flex items-center justify-between px-5 border-b
+          ${
+            isDarkMode
+              ? "border-white/10 bg-[#020617]/40"
+              : "border-gray-200 bg-white/70"
+          }
+          backdrop-blur-xl`}
+        >
+          <h2
+            className={`text-lg font-semibold tracking-wide ${
+              isDarkMode ? "text-white" : "text-gray-800"
+            }`}
+          >
+            HTML Editor
+          </h2>
+
+          {/* ❌ CLOSE BUTTON */}
+          <button
+            onClick={onClose}
+            className={`p-2 rounded-lg transition-all duration-200
+            ${
+              isDarkMode
+                ? "hover:bg-white/10 text-white"
+                : "hover:bg-gray-100 text-gray-700"
+            }`}
+          >
+            <X className="w-5 h-5 transition-transform duration-200 hover:rotate-90" />
+          </button>
+        </div>
+
+        {/* ===== CONTENT ===== */}
+        <div className="h-[calc(100%-3.5rem)]">
+          {isLoading ? (
+            <div className="flex items-center justify-center h-full">
+              <div
+                className={`h-10 w-10 rounded-full border-2 animate-spin
+                ${
+                  isDarkMode
+                    ? "border-cyan-400 border-t-transparent"
+                    : "border-blue-600 border-t-transparent"
+                }`}
+              />
+            </div>
+          ) : error ? (
+            <div className="text-red-500 text-center p-4">{error}</div>
+          ) : (
+            <div className="h-full p-3">
+              {/* 🖥️ PREMIUM PREVIEW FRAME */}
+              <div
+                className={`w-full h-full rounded-xl overflow-hidden border
+                ${
+                  isDarkMode
+                    ? "border-white/10 bg-[#020617]"
+                    : "border-gray-200 bg-white"
+                }
+                shadow-inner`}
+              >
+                <div
+  className={`relative w-full h-full transition-all duration-300 ${
+    isRefreshing ? "scale-[0.985] opacity-70" : "scale-100 opacity-100"
+  }`}
+>
+  <iframe
+    key={previewKey}
+    srcDoc={htmlContent}
+    className="w-full h-full border-none rounded-xl"
+    title="HTML Preview"
+    sandbox="allow-scripts allow-same-origin"
+  />
+
+  {/* live glow overlay */}
+  <div
+    className={`pointer-events-none absolute inset-0 rounded-xl transition-opacity duration-300 ${
+      isRefreshing ? "opacity-100 bg-cyan-400/10" : "opacity-0"
+    }`}
+  />
+</div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
