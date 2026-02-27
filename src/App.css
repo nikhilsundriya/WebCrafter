@@ -6,8 +6,6 @@
   --glass-bg: rgba(255, 255, 255, 0.04);
   --glass-border: rgba(255, 255, 255, 0.08);
 }
-
-/* Smooth rendering */
 * {
   box-sizing: border-box;
 }
