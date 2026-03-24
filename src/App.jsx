@@ -42,7 +42,6 @@ import { TabBar } from "./components/TabBar";
 import { useFullscreen } from "./hooks/useFullscreen";
 import { GitHubReadmeViewer } from "./components/GitHubReadmeViewer";
 import { HtmlEditor } from "./components/HtmlEditor";
-
 // Add these effects after other imports and before the App component
 const STORAGE_KEYS = {
   FILES: "editore_files",
