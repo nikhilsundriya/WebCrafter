@@ -35,7 +35,6 @@ Start the development server:
 ```sh
 npm run dev
 ```
-
 Or open `index.html` in your browser if it is a static project.
 
 ## Contributing
