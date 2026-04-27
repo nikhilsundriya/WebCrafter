@@ -22,7 +22,6 @@ export const HtmlEditor = ({ isOpen, onClose, isDarkMode }) => {
     setIsRefreshing(false);
   }, 180);
 };
-
   const fetchHtmlContent = async () => {
     try {
       setIsLoading(true);
@@ -56,7 +55,6 @@ export const HtmlEditor = ({ isOpen, onClose, isDarkMode }) => {
         </style>
         ${content}
       `;
-
       setHtmlContent(styledContent);
       refreshPreview();
       setError(null);
@@ -118,7 +116,6 @@ export const HtmlEditor = ({ isOpen, onClose, isDarkMode }) => {
             <X className="w-5 h-5 transition-transform duration-200 hover:rotate-90" />
           </button>
         </div>
-
         {/* ===== CONTENT ===== */}
         <div className="h-[calc(100%-3.5rem)]">
           {isLoading ? (
@@ -158,7 +155,6 @@ export const HtmlEditor = ({ isOpen, onClose, isDarkMode }) => {
     title="HTML Preview"
     sandbox="allow-scripts allow-same-origin"
   />
-
   {/* live glow overlay */}
   <div
     className={`pointer-events-none absolute inset-0 rounded-xl transition-opacity duration-300 ${
