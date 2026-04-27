@@ -1,6 +1,5 @@
 import React from "react";
 import { Files, Settings, BookOpen, Code2 } from "lucide-react";
-
 export const SidebarNav = ({
   activeTab,
   setActiveTab,
@@ -48,7 +47,6 @@ export const SidebarNav = ({
       {tabs.map((tab) => {
         const Icon = tab.icon;
         const isActive = activeTab === tab.id;
-
         return (
           <button
             key={tab.id}
@@ -87,7 +85,6 @@ export const SidebarNav = ({
                 group-hover:scale-110
               `}
             />
-
             {/* hover glow */}
             <span className="pointer-events-none absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-gradient-to-r from-blue-500/0 via-blue-500/10 to-cyan-400/0 blur-xl" />
           </button>
